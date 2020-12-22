@@ -10,7 +10,7 @@ export default class SignInPage extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.centerArea}>
-                    <Image source={require('../image/logo.png')} style={styles.logo} />
+                    <Image source={require('../../image/logo.png')} style={styles.logo} />
                     <TextInput 
                     placeholder='Kullanıcı Adı'
                     placeholderTextColor='#8E8E8E'
@@ -26,7 +26,7 @@ export default class SignInPage extends Component {
                             <Text style={styles.forgetPasswordText}>Şifreni mi Unuttun ?</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.logInButton}>
+                    <TouchableOpacity style={styles.logInButton} onPress={() => this.props.navigation.navigate('TabNavigation')}>
                         <Text style={styles.LogInButtonText}>Giriş Yap</Text>
                     </TouchableOpacity>
                     <View style={styles.orView}>

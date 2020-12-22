@@ -8,9 +8,10 @@ export default class FirstPage extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.CenterArea}>
-                    <Image source={require('../image/logo.png')} style={styles.logo} />
+                    <Image source={require('../../image/logo.png')} style={styles.logo} />
                     <TouchableOpacity 
                     style={styles.button}
+                    onPress={() => this.props.navigation.navigate('SignUpPage')}
                     >
                         <Text style={styles.buttonText}>Yeni Hesap Oluştur</Text>
                     </TouchableOpacity>
