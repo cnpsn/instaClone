@@ -1,14 +1,17 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet} from 'react-native'
+import { Text, View, StyleSheet, FlatList} from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {AppContext} from '../src/Components/AppContext'
+
 /* StackScreen  */
 import FirstPage from './pages/StackPages/FirstPage'
 import SignInPage from './pages/StackPages/SignInPage'
 import SignUpPage from './pages/StackPages/SignUpSteps/SignUpPage'
 import SignUpPhotoUpdatePage from './pages/StackPages/SignUpSteps/SignUpPhotoUpdatePage'
+import WelcomeInstagramPage from './pages/StackPages/SignUpSteps/WelcomeInstagramPage'
 /* TabBarScreen  */
 import HomeScreen from './pages/TabBarPages/HomeScreen'
 import SearchScreen from './pages/TabBarPages/SearchScreen'
@@ -67,9 +70,42 @@ export default class Router extends Component {
             </Tab.Navigator>
             )
         }
-        return (
+        if(this.context.initializing === true){
+            return null
+        }else if(this.context.user !== null){
+            return (
+                <NavigationContainer>
+                    <Stack.Navigator initialRouteName='TabNavigation'>
+                        <Stack.Screen name="FirstPage" component={FirstPage} options={{
+                            headerShown:false
+                        }} />
+                        <Stack.Screen name="SignInPage" component={SignInPage} options={{
+                            headerShown:false
+                        }}
+                        />
+                        <Stack.Screen name="SignUpPage" component={SignUpPage} options={{
+                            headerShown:false
+                        }}
+                        />
+                        <Stack.Screen name='TabNavigation' component={TabNavigation} options={{
+                            headerShown:false
+                        }}
+                        />
+                        <Stack.Screen name='SignUpPhotoUpdatePage' component={SignUpPhotoUpdatePage} options={{
+                            headerShown:false
+                        }}
+                        />
+                        <Stack.Screen name='WelcomeInstagramPage' component={WelcomeInstagramPage} options={{
+                            headerShown:false
+                        }}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            )
+        }else if(this.context.user === null){
+            return(
             <NavigationContainer>
-                <Stack.Navigator initialRouteName='SignUpPhotoUpdatePage'>
+                <Stack.Navigator initialRouteName='FirstPage'>
                     <Stack.Screen name="FirstPage" component={FirstPage} options={{
                         headerShown:false
                     }} />
@@ -89,8 +125,14 @@ export default class Router extends Component {
                         headerShown:false
                     }}
                     />
+                    <Stack.Screen name='WelcomeInstagramPage' component={WelcomeInstagramPage} options={{
+                        headerShown:false
+                    }}
+                    />
                 </Stack.Navigator>
-            </NavigationContainer>
-        )
+        </NavigationContainer>
+            )
+        }   
     }
 }
+Router.contextType = AppContext;

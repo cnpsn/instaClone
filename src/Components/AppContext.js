@@ -9,7 +9,18 @@ export default class AppProvider extends Component {
         email:'',
         password:'',
         username:'',
-        loading:false
+        loading:false,
+
+        user:'',
+        initializing:true,
+    }
+    onAuthStateChanged = (user) => {
+        this.setState({user:user})
+        if (this.state.initializing) this.setState({initializing:false});
+    }
+    componentDidMount(){
+        const subscriber = auth().onAuthStateChanged(this.onAuthStateChanged);
+        return subscriber;
     }
     signUpPress = ({email,password,navigate}) => {
         this.setState({loading:true})
@@ -56,7 +67,9 @@ export default class AppProvider extends Component {
                 setUsername:(text) => this.setState({username:text}),
                 signUpPress:this.signUpPress,
                 loading:this.state.loading,
-                setLoading:(value) => this.setState({loading:value})
+                setLoading:(value) => this.setState({loading:value}),
+                user:this.state.user,
+                initializing:this.state.initializing,
             }}
             >
                 {this.props.children}
@@ -66,36 +79,3 @@ export default class AppProvider extends Component {
 }
 const AppContextConsumer = AppContext.Consumer
 export {AppContextConsumer}
-/**
- * 
- *         this.setState({loading:true})
-        if(this.state.email === '' || this.state.password === '' || this.state.username === ''){
-            alert('Lütfen boş alan bırakmayın')
-            this.setState({loading:false})
-        }else{
-        auth()
-        .createUserWithEmailAndPassword(email,password)
-        .then(() => {
-            this.setState({loading:false})
-        })
-        .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-            alert('Verilen e-posta adresine sahip bir hesap zaten var');
-            this.setState({loading:false})
-            }
-            if (error.code === 'auth/invalid-email') {
-            alert('Lütfen geçerli bir e-posta adresi deneyin');
-            this.setState({loading:false})
-            }
-            if(error.code === 'auth/weak-password'){
-            alert('Lütfen daha güçlü bir şifre deneyin')
-            this.setState({loading:false})
-            }
-            if(error.code === 'auth/operation-not-allowed'){
-            alert('Hesap aktif değil')
-            this.setState({loading:false})
-            }
-            console.log(error.code)
-        });
-        }
- */
