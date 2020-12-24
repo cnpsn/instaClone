@@ -3,6 +3,8 @@ import { Text, View,StyleSheet,Button,Image,TouchableOpacity,SafeAreaView,Activi
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import firestore from '@react-native-firebase/firestore';
+import {AppContext} from '../../../Components/AppContext'
 
 const options = {
     storageOptions: {
@@ -12,8 +14,8 @@ const options = {
 };
 export default class SignUpPhotoUpdatePage extends Component {
     state={
-        file:'',
-        fileName:'',
+        photoSource:'',
+        photoRef:'',
         fotoİcon:true,
         loading:false,
     }
@@ -32,8 +34,8 @@ export default class SignUpPhotoUpdatePage extends Component {
               // const source = { uri: 'data:image/jpeg;base64,' + response.data };
           
               this.setState({
-                file: source,
-                fileName:response.fileName,
+                photoSource: source,
+                photoRef:response.fileName,
                 fotoİcon:false
               });
             }
@@ -41,9 +43,9 @@ export default class SignUpPhotoUpdatePage extends Component {
     }
     UpdatePhoto = () => {
         this.setState({loading:true})
-        const reference = storage().ref(this.state.fileName);
+        const reference = storage().ref(this.state.photoRef);
         // path to existing file on filesystem
-        const pathToFile = this.state.file.uri;
+        const pathToFile = this.state.photoSource.uri;
         const task = reference.putFile(pathToFile);
         // uploads file
         reference.putFile(pathToFile);
@@ -51,8 +53,19 @@ export default class SignUpPhotoUpdatePage extends Component {
             console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
         });  
         task.then(() => {
-            this.setState({loading:false})
-            this.props.navigation.navigate('WelcomeInstagramPage')
+            /* Fotoğraf karşıya yüklendikten sonra kullanıcı bilgilerini firestore'a yaz  */
+            firestore()
+            .collection('Users')
+            .doc(this.context.user.uid)
+            .set({
+              username:this.context.username,
+              email:this.context.email,
+              photoRef:this.state.photoRef,
+            })
+            .then(() => {
+              this.setState({loading:false})
+              this.props.navigation.navigate('WelcomeInstagramPage')
+            });
         });
     }
     render() {
@@ -64,7 +77,7 @@ export default class SignUpPhotoUpdatePage extends Component {
                         {this.state.fotoİcon ? <Icon name="user-circle" size={55} color="#2795F6" /> : 
                         <Image 
                         style={styles.image}
-                        source={{uri:this.state.file.uri}}
+                        source={{uri:this.state.photoSource.uri}}
                         />
                         }
                     </TouchableOpacity>
@@ -78,6 +91,8 @@ export default class SignUpPhotoUpdatePage extends Component {
         )
     }
 }
+SignUpPhotoUpdatePage.contextType = AppContext;
+
 const styles = StyleSheet.create({
     container:{
         flex:1,
