@@ -11,7 +11,6 @@ export default class WelcomeInstagramPage extends Component {
         loading:false,
         photoRef:'',
         userUid:'',
-        photoUrl:'',
         username:'',
     }
     componentDidMount(){
@@ -25,7 +24,7 @@ export default class WelcomeInstagramPage extends Component {
             .ref(documentSnapshot.data().photoRef)
             .getDownloadURL()
             .then(url => {
-                this.setState({photoUrl:url})
+                this.context.setPhotoUrl(url)
             })
         });
     }
@@ -37,12 +36,12 @@ export default class WelcomeInstagramPage extends Component {
                     <TouchableOpacity style={styles.imageView} onPress={this.ChoosePhoto}>
                     <Image 
                     style={styles.image}
-                    source={this.state.photoUrl ? {uri: this.state.photoUrl } : null}
+                    source={this.context.photoUrl ? {uri: this.context.photoUrl } : null}
                     />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bottomArea}>
-                    <TouchableOpacity style={styles.button} onPress={this.UpdatePhoto}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('TabNavigation')}>
                        {this.state.loading ? <ActivityIndicator color='#fff' /> : <Text style={styles.buttonText}>İleri</Text>} 
                     </TouchableOpacity>
                 </View>

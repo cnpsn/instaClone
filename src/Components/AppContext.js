@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 export const AppContext = React.createContext();
 
@@ -10,9 +12,9 @@ export default class AppProvider extends Component {
         password:'',
         username:'',
         loading:false,
-
         user:'',
         initializing:true,
+        photoUrl:'',
     }
     onAuthStateChanged = (user) => {
         this.setState({user:user})
@@ -55,7 +57,53 @@ export default class AppProvider extends Component {
         });
         }
     }
+    SignInButton = ({email,password,navigate}) => {
+        this.setState({loading:true})
+        if(email === '' || password === ''){
+            alert('Lütfen boş alan bırakmayınız !')
+            this.setState({loading:false})
+        }else{
+            auth()
+            .signInWithEmailAndPassword(email,password)
+            .then(() => {
+                console.log(this.state.user)
+                firestore()
+                .collection('Users')
+                .doc(this.state.user.uid)
+                .get()
+                .then(documentSnapshot => {
+                    storage()
+                    .ref(documentSnapshot.data().photoRef)
+                    .getDownloadURL()
+                    .then(url => {
+                        this.setState({photoUrl:url})
+                        this.setState({loading:false})
+                        navigate('TabNavigation')
+                    })
+                });
+            })
+            .catch(error => {
+                if (error.code === 'auth/invalid-email') {
+                alert('Bu e-posta adresi geçerli değil !');
+                this.setState({loading:false})
+                }
+                if (error.code === 'auth/user-disabled') {
+                alert('Bu e-posta adresi devre dışı bırakılmış');
+                this.setState({loading:false})
+                }
+                if (error.code === 'auth/user-not-found') {
+                alert('Böyle bir e-posta adresi yok !');
+                this.setState({loading:false})
+                }
+                if (error.code === 'auth/wrong-password') {
+                alert('e-posta adresi veya şifre yanlış');
+                this.setState({loading:false})
+                }
+            });   
+        }
+    }
     render() {
+        console.log(this.state.photoUrl)
         return (
             <AppContext.Provider
             value={{
@@ -66,10 +114,13 @@ export default class AppProvider extends Component {
                 username:this.state.username,
                 setUsername:(text) => this.setState({username:text}),
                 signUpPress:this.signUpPress,
+                SignInButton:this.SignInButton,
                 loading:this.state.loading,
                 setLoading:(value) => this.setState({loading:value}),
                 user:this.state.user,
                 initializing:this.state.initializing,
+                photoUrl:this.state.photoUrl,
+                setPhotoUrl:(text) => this.setState({photoUrl:text})
             }}
             >
                 {this.props.children}

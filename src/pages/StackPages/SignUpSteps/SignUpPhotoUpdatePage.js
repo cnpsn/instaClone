@@ -18,6 +18,8 @@ export default class SignUpPhotoUpdatePage extends Component {
         photoRef:'',
         fotoİcon:true,
         loading:false,
+        post:[],
+        story:[],
     }
     ChoosePhoto = () => {
         launchImageLibrary(options, (response) => {
@@ -61,6 +63,8 @@ export default class SignUpPhotoUpdatePage extends Component {
               username:this.context.username,
               email:this.context.email,
               photoRef:this.state.photoRef,
+              post:this.state.post,
+              story:this.state.story
             })
             .then(() => {
               this.setState({loading:false})

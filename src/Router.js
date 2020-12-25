@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, FlatList} from 'react-native'
+import {Image} from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -23,6 +23,7 @@ export default class Router extends Component {
     render() {
         const Stack = createStackNavigator();
         const Tab = createBottomTabNavigator();
+        console.log(this.context.photoUrl)
 
         const TabNavigation = () => {
             return(
@@ -43,7 +44,7 @@ export default class Router extends Component {
                     )
                 }}
                 />
-                <Tab.Screen name="NotificationScreen" component={NotificationScreen} 
+                <Tab.Screen name="PlusScreen" component={PlusScreen} 
                 options={{
                     tabBarLabel:props => false,
                     tabBarIcon:props => (
@@ -51,7 +52,7 @@ export default class Router extends Component {
                     )
                 }}
                 />
-                <Tab.Screen name="ProfileScreen" component={ProfileScreen} 
+                <Tab.Screen name="NotificationScreen" component={NotificationScreen} 
                 options={{
                     tabBarLabel:props => false,
                     tabBarIcon:props => (
@@ -59,10 +60,17 @@ export default class Router extends Component {
                     )
                 }}
                 />
-                <Tab.Screen name="PlusScreen" component={PlusScreen} 
+                <Tab.Screen name="ProfileScreen" component={ProfileScreen} 
                 options={{
                     tabBarLabel:props => false,
                     tabBarIcon:props => (
+                        this.context.photoUrl !== ''
+                        ?
+                        <Image 
+                        style={{height:28,width:28,borderRadius:14}}
+                        source={{uri:this.context.photoUrl}}
+                        />
+                        :
                         <Icon name="user-circle" size={26} color="#495057" />
                     )
                 }}

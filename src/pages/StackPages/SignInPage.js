@@ -1,33 +1,49 @@
 import React, { Component } from 'react'
-import { Text, View,StyleSheet,Dimensions,Image,TextInput,TouchableOpacity } from 'react-native'
+import { Text, View,StyleSheet,Dimensions,Image,TextInput,TouchableOpacity,ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {AppContext} from '../../Components/AppContext'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default class SignInPage extends Component {
+    state={
+        email:'',
+        password:'',
+    }
     render() {
         return (
             <View style={styles.container}>
                 <View style={styles.centerArea}>
                     <Image source={require('../../image/logo.png')} style={styles.logo} />
                     <TextInput 
-                    placeholder='Kullanıcı Adı'
+                    placeholder='E-mail'
                     placeholderTextColor='#8E8E8E'
                     style={styles.textInput}
+                    autoCapitalize='none'
+                    value={this.state.email}
+                    onChangeText={text => this.setState({email:text})}
                     />
                     <TextInput 
                     placeholder='Şifre'
                     placeholderTextColor='#8E8E8E'
+                    secureTextEntry={true}
                     style={[styles.textInput,{marginTop:15}]}
+                    autoCapitalize='none'
+                    value={this.state.password}
+                    onChangeText={text => this.setState({password:text})}
                     />
                     <View style={styles.forgetPasswordView}>
                         <TouchableOpacity>
                             <Text style={styles.forgetPasswordText}>Şifreni mi Unuttun ?</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.logInButton} onPress={() => this.props.navigation.navigate('TabNavigation')}>
-                        <Text style={styles.LogInButtonText}>Giriş Yap</Text>
+                    <TouchableOpacity style={styles.logInButton} onPress={() => this.context.SignInButton({
+                        email:this.state.email,
+                        password:this.state.password,
+                        navigate:this.props.navigation.navigate,
+                    })}>
+                       {this.context.loading ? <ActivityIndicator color='#fff' /> : <Text style={styles.LogInButtonText}>Giriş Yap</Text>} 
                     </TouchableOpacity>
                     <View style={styles.orView}>
                         <Text style={styles.orText}>YA DA</Text>
@@ -47,6 +63,8 @@ export default class SignInPage extends Component {
         )
     }
 }
+SignInPage.contextType = AppContext;
+
 const styles = StyleSheet.create({
     container:{
         flex:1,
