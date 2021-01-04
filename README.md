@@ -1,4 +1,13 @@
 # instaClone
 
+Instagram Clone built with React Native.
+![instaClone](https://user-images.githubusercontent.com/51968635/103566209-a5ff4200-4ed2-11eb-9fb9-ab24f15de79d.gif)
 
-![ezgif com-optimize](https://user-images.githubusercontent.com/51968635/103564186-23c14e80-4ecf-11eb-8b64-af4135a086e8.gif)
+#Get Started 
+$ git clone https://github.com/cnpsn/instaClone.git
+$ cd instaClone
+$ npm install
+$ cd ios/
+$ pod install
+$ cd ..
+$ npx react-native run-ios or npx react-native run-android
