@@ -18,8 +18,6 @@ export default class SignUpPhotoUpdatePage extends Component {
         photoRef:'',
         fotoİcon:true,
         loading:false,
-        post:[],
-        story:[],
     }
     ChoosePhoto = () => {
         launchImageLibrary(options, (response) => {
@@ -31,9 +29,6 @@ export default class SignUpPhotoUpdatePage extends Component {
               console.log('User tapped custom button: ', response.customButton);
             } else {
               const source = { uri: response.uri };
-          
-              // You can also display the image using data:
-              // const source = { uri: 'data:image/jpeg;base64,' + response.data };
           
               this.setState({
                 photoSource: source,
@@ -63,8 +58,6 @@ export default class SignUpPhotoUpdatePage extends Component {
               username:this.context.username,
               email:this.context.email,
               photoRef:this.state.photoRef,
-              post:this.state.post,
-              story:this.state.story
             })
             .then(() => {
               this.setState({loading:false})

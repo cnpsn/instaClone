@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-
+import Router from '../Router'
 export const AppContext = React.createContext();
 
 export default class AppProvider extends Component {
@@ -14,15 +14,39 @@ export default class AppProvider extends Component {
         loading:false,
         user:'',
         initializing:true,
-        photoUrl:'',
+
+        profilPhotoUrl:'',
+
+        postPhotoRef:'',
+        postPhotoSource:'',
+        postPhotoUrl:'',
     }
     onAuthStateChanged = (user) => {
         this.setState({user:user})
         if (this.state.initializing) this.setState({initializing:false});
     }
     componentDidMount(){
-        const subscriber = auth().onAuthStateChanged(this.onAuthStateChanged);
+        const subscriber = auth().onAuthStateChanged(this.onAuthStateChanged)
         return subscriber;
+    }
+    componentDidUpdate(prevProps,prevState){
+        if(prevState.user !== this.state.user){
+            if(this.state.user !== null){
+                firestore()
+                .collection('Users')
+                .doc(this.state.user.uid)
+                .get()
+                .then(documentSnapshot => {
+                    storage()
+                    .ref(documentSnapshot.data().photoRef)
+                    .getDownloadURL()
+                    .then(url => {
+                        this.setState({profilPhotoUrl:url})
+                    })
+                    this.setState({username:documentSnapshot.data().username})
+                });
+            }
+        }
     }
     signUpPress = ({email,password,navigate}) => {
         this.setState({loading:true})
@@ -76,7 +100,7 @@ export default class AppProvider extends Component {
                     .ref(documentSnapshot.data().photoRef)
                     .getDownloadURL()
                     .then(url => {
-                        this.setState({photoUrl:url})
+                        this.setState({profilPhotoUrl:url})
                         this.setState({loading:false})
                         navigate('TabNavigation')
                     })
@@ -103,7 +127,6 @@ export default class AppProvider extends Component {
         }
     }
     render() {
-        console.log(this.state.photoUrl)
         return (
             <AppContext.Provider
             value={{
@@ -119,8 +142,18 @@ export default class AppProvider extends Component {
                 setLoading:(value) => this.setState({loading:value}),
                 user:this.state.user,
                 initializing:this.state.initializing,
-                photoUrl:this.state.photoUrl,
-                setPhotoUrl:(text) => this.setState({photoUrl:text})
+                initialRoute:this.state.initialRoute,
+                profilPhotoUrl:this.state.profilPhotoUrl,
+                setProfilPhotoUrl:(text) => this.setState({profilPhotoUrl:text}), 
+
+                postPhotoRef:this.state.postPhotoRef,
+                setPostPhotoRef:(text) => this.setState({postPhotoRef:text}),
+
+                postPhotoSource:this.state.postPhotoSource,
+                setPostPhotoSource:(text) => this.setState({postPhotoSource:text}),
+
+                postPhotoUrl:this.state.postPhotoUrl,
+                setPostPhotoUrl:(text) => this.setState({postPhotoUrl:text}),
             }}
             >
                 {this.props.children}

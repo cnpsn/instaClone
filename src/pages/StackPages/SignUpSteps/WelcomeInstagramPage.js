@@ -24,7 +24,7 @@ export default class WelcomeInstagramPage extends Component {
             .ref(documentSnapshot.data().photoRef)
             .getDownloadURL()
             .then(url => {
-                this.context.setPhotoUrl(url)
+                this.context.setProfilPhotoUrl(url)
             })
         });
     }
@@ -36,7 +36,7 @@ export default class WelcomeInstagramPage extends Component {
                     <TouchableOpacity style={styles.imageView} onPress={this.ChoosePhoto}>
                     <Image 
                     style={styles.image}
-                    source={this.context.photoUrl ? {uri: this.context.photoUrl } : null}
+                    source={this.context.profilPhotoUrl ? {uri: this.context.profilPhotoUrl } : null}
                     />
                     </TouchableOpacity>
                 </View>
